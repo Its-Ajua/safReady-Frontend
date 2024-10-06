@@ -36,6 +36,7 @@ body {
     --radius: 0.5rem;
   }
 
+  /**--popover-foreground: 222 37% 98%;*/
   .dark {
     --background: 222 50% 4%;
     --foreground: 222 37% 97%;
@@ -66,4 +67,26 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.hover\:scale-105:hover {
+  transform: scale(1.05);
+}
+
+.dashboard-bg {
+  background: linear-gradient(to right, #f0f4ff, #d9e4ff);
+  min-height: 100vh; /* Ensure it covers the full height */
+}
+
+.description {
+  max-height: 60px; /* Adjust as needed */
+  overflow: hidden; /* Hide overflow text */
+}
+
+.theme-icon {
+  fill: #333; /* dark gray */
+}
+
+.dark .theme-icon {
+  fill: #fff; /* white */
 }
