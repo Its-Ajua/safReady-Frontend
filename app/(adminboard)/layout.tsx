@@ -15,10 +15,8 @@ export default function BoardLayout({children}: {children: React.ReactNode}) {
             </style>
             <div>
                 < Navbar/>
-                <div className="h-screen flex overflow-hidden">
-                    <div className="hidden md:block h-full w-[300px]">
+                <div className="h-screen flex overflow-hidden"> 
                     < SideBar/>
-                    </div>
                     <div className="h-full basis-full p-5 w-full md:max-w-[1140px] overflow-auto">
                         {children}
                     </div>

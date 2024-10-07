@@ -67,7 +67,7 @@ export default function Submission() {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-blue-600">Full Name</FormLabel>
+                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-white">Full Name</FormLabel>
                 <FormControl>
                   <Input type="name" placeholder="Enter your name" className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"  
                   {...field} />
@@ -82,7 +82,7 @@ export default function Submission() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-blue-600">Email Address</FormLabel>
+                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-white">Email Address</FormLabel>
                 <FormControl>
                   <Input type="email" placeholder="Enter a valid email address" className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"  
                     {...field} />
@@ -97,7 +97,7 @@ export default function Submission() {
             name="resume"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-blue-600">Resume</FormLabel>
+                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-white">Resume</FormLabel>
                 <FormControl>
                   <Input type="url" placeholder="https://example.com/resume" className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"  
                     {...field} />
@@ -112,7 +112,7 @@ export default function Submission() {
             name="portfolio"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-blue-600">Portfolio</FormLabel>
+                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-white">Portfolio</FormLabel>
                 <FormControl>
                   <Input type="url" placeholder="https://example.com/portfolio" className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"  
                     {...field} />

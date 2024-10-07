@@ -1,4 +1,4 @@
-"use client"; // Mark this as a client component
+"use client"; 
 
 import {
   Command,
@@ -9,7 +9,7 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-import { Settings, User } from "lucide-react";
+import { CheckCircle, FileText, Home, LayoutDashboard, Mail, Settings, User } from "lucide-react";
 import Link from "next/link"; // Import Next.js Link component
 import { useState, useEffect } from "react"; // Import useEffect
 import { Button } from "../ui/button";
@@ -32,146 +32,100 @@ export function SideBar() {
   return (
     <div>
       {/* Desktop Menu */}
-      <div className="hidden md:block px-2">
-        <Command className="rounded-none">
-          <CommandInput placeholder="Type a command or search..." className="active:bg-white" />
+      <div className="md:block px-2 h-full">
+        <Command className="rounded-none ">
+          <div className="hidden md:block">
+            <CommandInput placeholder="Type a command or search..." className="active:bg-white" />
+          </div>
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
 
             {role === "Admin" ? (
+              <Link href="/admin-dashboard">
               <CommandItem>
-                <Link href="/admin-dashboard">Admin Dashboard</Link>
+                <Home className="mr-2 w-4 h-4"/>
+                <span className="hidden sm:inline-block">Admin Dashboard</span>
               </CommandItem>
+              </Link>
             ) : (
+              <Link href="/dashboard">
               <CommandItem>
-                <Link href="/dashboard">Dashboard</Link>
+                <Home className="mr-2 w-4 h-4"/>
+                <span className="hidden sm:inline-block">Dashboard</span>
               </CommandItem>
+              </Link>
             )}
 
             {role !== "Admin" && (
+              <Link href="/checklist">
               <CommandItem>
-                <Link href="/checklist">Job Search Checklist</Link>
+                <LayoutDashboard className="mr-2 w-4 h-4"/>
+                <span className="hidden sm:inline-block">Job Search Checklist</span>
               </CommandItem>
+              </Link>
             )}
 
             {role === "Admin" ? (
+              <Link href="/reviews">
               <CommandItem>
-                <Link href="/reviews">Reviews</Link>
+                <CheckCircle className="mr-2 w-4 h-4"/>
+                <span className="hidden sm:inline-block">Reviews</span>
               </CommandItem>
+              </Link>
             ) : (
+              <Link href="/submission">
               <CommandItem>
-                <Link href="/submission">Resume/Portfolio Review</Link>
+                <FileText className="mr-2 w-4 h-4"/>
+                <span className="hidden sm:inline-block">Resume/Portfolio</span>
               </CommandItem>
+              </Link>
             )}
 
             {role === "Admin" ? (
+              <Link href="/scheduled-calls">
               <CommandItem>
-                <Link href="/scheduled-calls">Scheduled Calls</Link>
+                <Mail className="mr-2 w-4 h-4"/>
+                <span className="hidden sm:inline-block">Scheduled Calls</span>
               </CommandItem>
+              </Link>
             ) : (
-              <CommandItem>
-                <Link href="/contact-form">Contact Form</Link>
-              </CommandItem>
+              <Link href="/contact-form">
+                <CommandItem>
+                  <Mail className="mr-2 w-4 h-4"/>
+                  <span className="hidden sm:inline-block">Contact Form</span>
+                </CommandItem>
+              </Link>
             )}
 
             <CommandSeparator />
-            <CommandGroup heading="Settings">
-              <CommandItem>
-                <User className="mr-2 w-4 h-4" />
-                <Link href="/profile">Profile</Link>
-              </CommandItem>
+            <CommandGroup heading={<span className="hidden sm:block">Settings</span>}>
+              <Link href="/profile">
+                <CommandItem>
+                  <User className="mr-2 w-4 h-4" />
+                    <span className="hidden sm:inline-block">Profile</span>
+                </CommandItem>
+              </Link>
+              
 
               {role === "Admin" ? (
-                <CommandItem>
-                  <Settings className="mr-2 w-4 h-4" />
-                  <Link href="/admin-settings">Admin Settings</Link>
-                </CommandItem>
+                <Link href="/admin-settings">
+                  <CommandItem>
+                    <Settings className="mr-2 w-4 h-4" />
+                    <span className="hidden sm:inline-block">Admin Settings</span>
+                  </CommandItem>
+                </Link>
               ) : (
-                <CommandItem>
-                  <Settings className="mr-2 w-4 h-4" />
-                  <Link href="/settings">Settings</Link>
-                </CommandItem>
+                <Link href="/settings">
+                  <CommandItem>
+                    <Settings className="mr-2 w-4 h-4" />
+                    <span className="hidden sm:inline-block">Settings</span>
+                  </CommandItem>
+                </Link>
               )}
             </CommandGroup>
           </CommandList>
         </Command>
       </div>
-
-      {/* Mobile Menu */}
-      <div className="md:hidden relative">
-        <Button
-          onClick={toggleMenu}
-          className="bg-gray-600 text-white px-4 py-2 w-full rounded-md hover:bg-gray-700 transition"
-        >
-          Menu
-        </Button>
-        {isOpen && (
-          <div className="absolute z-10 mt-2 w-full bg-white rounded-md shadow-lg">
-            <Command className="rounded-none">
-              <CommandInput placeholder="Type a command or search..." className="active:bg-gray-200" />
-              <CommandList>
-                <CommandEmpty>No results found.</CommandEmpty>
-
-                {role === "Admin" ? (
-                  <CommandItem>
-                    <Link href="/admin/dashboard">Admin Dashboard</Link>
-                  </CommandItem>
-                ) : (
-                  <CommandItem>
-                    <Link href="/dashboard">Dashboard</Link>
-                  </CommandItem>
-                )}
-
-                {role !== "Admin" && (
-                  <CommandItem>
-                    <Link href="/checklist">Job Search Checklist</Link>
-                  </CommandItem>
-                )}
-
-                {role === "Admin" ? (
-                  <CommandItem>
-                    <Link href="/reviews">Reviews</Link>
-                  </CommandItem>
-                ) : (
-                  <CommandItem>
-                    <Link href="/submission">Resume/Portfolio Review</Link>
-                  </CommandItem>
-                )}
-
-                {role === "Admin" ? (
-                  <CommandItem>
-                    <Link href="/scheduled-calls">Scheduled Calls</Link>
-                  </CommandItem>
-                ) : (
-                  <CommandItem>
-                    <Link href="/contact-form">Contact Form</Link>
-                  </CommandItem>
-                )}
-
-                <CommandSeparator />
-                <CommandGroup heading="Settings">
-                  <CommandItem>
-                    <User className="mr-2 w-4 h-4" />
-                    <Link href="/profile">Profile</Link>
-                  </CommandItem>
-
-                  {role === "Admin" ? (
-                    <CommandItem>
-                      <Settings className="mr-2 w-4 h-4" />
-                      <Link href="/admin/settings">Admin Settings</Link>
-                    </CommandItem>
-                  ) : (
-                    <CommandItem>
-                      <Settings className="mr-2 w-4 h-4" />
-                      <Link href="/settings">Settings</Link>
-                    </CommandItem>
-                  )}
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </div>
-        )}
       </div>
-    </div>
   );
 }

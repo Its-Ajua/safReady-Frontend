@@ -47,7 +47,7 @@ export default function ContactForm() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-blue-700">Schedule a Live Call</h2>
+      <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-blue-800">Schedule a Live Call</h2>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 bg-white dark:bg-gray-600 p-6 rounded-md shadow-md">
@@ -58,7 +58,7 @@ export default function ContactForm() {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-blue-600">Full Name</FormLabel>
+                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-white">Full Name</FormLabel>
                 <FormControl>
                   <Input
                     type="text"
@@ -78,7 +78,7 @@ export default function ContactForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-blue-600">Email Address</FormLabel>
+                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-white">Email Address</FormLabel>
                 <FormControl>
                   <Input
                     type="email"
@@ -98,7 +98,7 @@ export default function ContactForm() {
             name="date"
             render={() => (
               <FormItem>
-                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-blue-600">Date</FormLabel>
+                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-white">Date</FormLabel>
                 <FormControl>
                 <Popover>
                 <PopoverTrigger asChild>
@@ -134,7 +134,7 @@ export default function ContactForm() {
             name="time"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-blue-600">Time</FormLabel>
+                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-white">Time</FormLabel>
                 <FormControl>
                   <Input
                     type="time"
@@ -153,7 +153,7 @@ export default function ContactForm() {
             name="message"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-blue-600">Additional Message</FormLabel>
+                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-white">Additional Message</FormLabel>
                 <FormControl>
                   <Input
                     type="text"

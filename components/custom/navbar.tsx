@@ -28,7 +28,7 @@ export function Navbar({ href = "./"}: NavProps) {
         <div className='bg-blue-950 dark:bg-slate-700 text-white py-2 px-5 flex justify-between font-bold'>
           <div className='flex items-center'>
             <Link href={href}>
-              <h4 className='font-bold py-3'>GradGear</h4>
+              <h4 className='font-bold py-3'>SAFReady</h4>
             </Link>
           </div>
           

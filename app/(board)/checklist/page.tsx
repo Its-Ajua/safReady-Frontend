@@ -10,6 +10,11 @@ interface ChecklistItem {
   link?: string;
 }
 
+interface ChecklistProps {
+  incrementChecklistsDone: () => void; // Accept the increment function as a prop
+}
+
+
 const checklistItems: ChecklistItem[] = [
     {
         title: 'Learn Essential Technologies',
@@ -83,16 +88,19 @@ const checklistItems: ChecklistItem[] = [
   },
 ];
 
-const Checklist = () => {
-
+const Checklist: React.FC<ChecklistProps> = ({ incrementChecklistsDone }) => {
   const [completedItems, setCompletedItems] = useState<boolean[]>(Array(checklistItems.length).fill(false));
 
   const toggleCompletion = (index: number) => {
     const updatedItems = [...completedItems];
     updatedItems[index] = !updatedItems[index];
     setCompletedItems(updatedItems);
+    
+    // Increment the checklist count if an item is checked
+    if (!updatedItems[index]) {
+      incrementChecklistsDone(); // Call the function to increment
+    }
   };
-
 
   return (
     <div className="container mx-auto px-1 py-4">
@@ -101,12 +109,12 @@ const Checklist = () => {
         {checklistItems.map((item, index) => (
           <li
             key={index}
-            className={`bg-white shadow-md dark:bg-gray-700 dark:text-blue-600 rounded-lg p-1 lg:p-1 transition overflow-auto flex items-center justify-between ${
+            className={`bg-white shadow-md dark:bg-gray-700 dark:text-white rounded-lg p-1 lg:p-1 transition overflow-auto flex items-center justify-between ${
               completedItems[index] ? 'bg-gray-200' : 'hover:bg-gray-50'
             }`}
           >
           <div>
-            <h3 className="text-md mt-2 font-bold text-blue-600">{item.title}</h3>
+            <h3 className="text-md mt-2 font-bold text-white">{item.title}</h3>
             <p className="text-gray-700 dark:text-black mt-2">{item.description}</p>
             {item.link && (
               <a
@@ -121,7 +129,7 @@ const Checklist = () => {
           </div>
           <Button onClick={() => toggleCompletion(index)} className="ml-4">
               {completedItems[index] ? (
-                <CheckCircle className="text-green-500 w-8 h-8 transition-transform transform scale-110"/>
+                <CheckCircle className="text-green-500 w-8 h-8 transition-transform transform scale-110" />
               ) : (
                 <Circle className="text-gray-400 w-8 h-8 transition-transform transform hover:scale-110" />
               )}
