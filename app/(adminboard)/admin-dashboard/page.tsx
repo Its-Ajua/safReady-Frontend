@@ -1,5 +1,4 @@
-import { FaCheckCircle, FaClipboardList, FaEnvelope } from 'react-icons/fa';
-// Dummy data for stats
+
 const stats = {
   checklistsDone: 0,
   reviewsDone: 0,

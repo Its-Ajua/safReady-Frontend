@@ -15,9 +15,7 @@ import {
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
-//import { toast } from "@/components/hooks/use-toast";
 import { Calendar } from "@/components/ui/calendar"
-import Link from 'next/link';
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Full name is required" }),
@@ -98,7 +96,7 @@ export default function ContactForm() {
           <FormField
             control={form.control}
             name="date"
-            render={({ field }) => (
+            render={() => (
               <FormItem>
                 <FormLabel className="block text-sm font-medium text-gray-700 dark:text-blue-600">Date</FormLabel>
                 <FormControl>
@@ -121,7 +119,7 @@ export default function ContactForm() {
                       selected={date}
                       onSelect={setDate}
                       initialFocus
-                    />
+                    /> 
                   </PopoverContent>
                 </Popover>
                 </FormControl>

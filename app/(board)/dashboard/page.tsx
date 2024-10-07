@@ -80,7 +80,7 @@ const DashBoardList = () => {
       {/* Success Stories */}
       <div className="mt-12 p-6 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-lg text-center w-full max-w-5xl">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-blue-600 ">Success Stories</h2>
-        <p className="text-gray-600 dark:text-black italic mt-2">"Thanks to the Resume Review feature, I landed my dream job!" - Jane Doe</p>
+        <p className="text-gray-600 dark:text-black italic mt-2">&quot;Thanks to the Resume Review feature, I landed my dream job!&quot; - Jane Doe</p>
       </div>
     </div>
   );

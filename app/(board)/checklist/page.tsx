@@ -10,7 +10,7 @@ interface ChecklistItem {
   link?: string;
 }
 
-const checklistItems = [
+const checklistItems: ChecklistItem[] = [
     {
         title: 'Learn Essential Technologies',
         description: 'Be proficient in core technologies like HTML, CSS, and JavaScript.',

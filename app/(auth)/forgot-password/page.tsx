@@ -18,7 +18,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function resetPasswordPage() {
+export default function ResetPasswordPage() {
     const form = useForm({
       defaultValues: {
           email: '',

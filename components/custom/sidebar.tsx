@@ -2,7 +2,6 @@
 
 import {
   Command,
-  CommandDialog,
   CommandEmpty,
   CommandGroup,
   CommandInput,
@@ -10,16 +9,13 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-import { LayoutDashboard, Newspaper, Folders, CreditCard, Settings, User } from "lucide-react";
+import { Settings, User } from "lucide-react";
 import Link from "next/link"; // Import Next.js Link component
 import { useState, useEffect } from "react"; // Import useEffect
 import { Button } from "../ui/button";
 
-export interface SideProps {
-  href?: string;
-}
 
-export function SideBar({ href = "./" }: SideProps) {
+export function SideBar() {
   const [role, setRole] = useState<string | null>(null); // Initialize role state
   const [isOpen, setIsOpen] = useState(false);
 
