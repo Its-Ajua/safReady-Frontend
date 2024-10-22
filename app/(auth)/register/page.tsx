@@ -35,7 +35,7 @@ export default function SignupPage() {
   const router = useRouter();
 
   useEffect(() => {
-    setIsMounted(true); // This ensures the router is only used after the component mounts
+    setIsMounted(true); 
   }, []);
 
   const form = useForm({
@@ -56,7 +56,6 @@ export default function SignupPage() {
     };
 
     try {
-      // API call to register the user
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, {
         method: 'POST',
         headers: {
@@ -66,7 +65,6 @@ export default function SignupPage() {
       });
 
       if (response.ok) {
-      // On successful registration, store the token and redirect
         const result = await response.json();
         localStorage.setItem('token', result.token);
         localStorage.setItem('user', JSON.stringify(result.user)); 
@@ -83,7 +81,7 @@ export default function SignupPage() {
   }, [isMounted, router]);
 
   if (!isMounted) {
-    return null; // Avoid rendering until component is mounted
+    return null; 
   }
 
   return (

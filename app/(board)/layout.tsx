@@ -1,13 +1,13 @@
 "use client";
 
+import { ChecklistProvider } from "./checklist-context";
 import { Navbar } from "@/components/custom/navbar";
 import { SideBar } from "@/components/custom/sidebar";
-import { SessionProvider } from "next-auth/react"; // Import SessionProvider
+import { SessionProvider } from "next-auth/react";
 
 export default function BoardLayout({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
-      {/* Now all components within BoardLayout can access session data */}
       <>
         <style global jsx>{`
           body {
@@ -17,9 +17,11 @@ export default function BoardLayout({ children }: { children: React.ReactNode })
         <div>
           <Navbar />
           <div className="h-screen flex overflow-hidden">
-              <SideBar />
+          <SideBar />
             <div className="h-full basis-full p-5 w-full md:max-w-[1140px] overflow-auto">
-              {children}
+              <ChecklistProvider>
+                {children}
+              </ChecklistProvider>
             </div>
           </div>
         </div>

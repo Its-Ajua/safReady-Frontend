@@ -1,9 +1,7 @@
 "use client"
 
-
 import { useState, useEffect } from 'react';
 import { FaCheckCircle, FaClipboardList, FaEnvelope } from 'react-icons/fa';
-import Checklist from '../checklist/page';
 
 
 const checklistItems = [
@@ -29,14 +27,18 @@ const checklistItems = [
 ];
 
 const DashBoardList = () => {
+  // State to store the number of completed checklists
   const [checklistsDone, setChecklistsDone] = useState(0);
-  const [reviewsDone, setReviewsDone] = useState(0);
-  const [liveSessionsScheduled, setLiveSessionsScheduled] = useState(0);
+  const [submissionsDone, setSubmissionsDone] = useState(0);
+  const [sessionsDone, setSessionsDone] = useState(0);
 
-  // Function to increment checklists done
-  const incrementChecklistsDone = () => {
-    setChecklistsDone(prevCount => prevCount + 1);
-  };
+  // Use effect to fetch the number of completed checklists from the backend
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/checklists/completed-count`)
+      .then((response) => response.json())
+      .then((data) => setChecklistsDone(data))
+      .catch((error) => console.error(error));
+  }, []);
   return (
     <div className="min-h-screen shadow-xl flex flex-col items-center justify-center py-10">
 
@@ -52,11 +54,11 @@ const DashBoardList = () => {
           <p className="text-lg text-gray-700 dark:text-white mt-2">Checklists Completed</p>
         </div>
         <div className="bg-white text-center dark:bg-gray-700 p-6 rounded-xl shadow-lg">
-          <h2 className="text-4xl font-bold text-blue-900 dark:text-black">{}</h2>
+          <h2 className="text-4xl font-bold text-blue-900 dark:text-black">{submissionsDone}</h2>
           <p className="text-lg text-gray-700  dark:text-white mt-2">Resumes Uploaded</p>
         </div>
         <div className="bg-white text-center p-6 dark:bg-gray-700 rounded-xl shadow-lg">
-          <h2 className="text-4xl font-bold text-blue-900 dark:text-black">{}</h2>
+          <h2 className="text-4xl font-bold text-blue-900 dark:text-black">{sessionsDone}</h2>
           <p className="text-lg text-gray-700  dark:text-white mt-2">Live Sessions Scheduled</p>
         </div>
       </div>
@@ -83,8 +85,6 @@ const DashBoardList = () => {
           </li>
         ))}
       </ul>
-
-      <Checklist incrementChecklistsDone={incrementChecklistsDone}
 
 
       {/* Success Stories */}

@@ -2,9 +2,9 @@
 
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { z, date } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,38 +12,62 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { format } from "date-fns"
+import { format, isPast, isToday } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Calendar } from "@/components/ui/calendar"
+import { useRouter } from 'next/navigation';
 
-const formSchema = z.object({
-  name: z.string().min(1, { message: "Full name is required" }),
-  email: z.string().email({ message: "Invalid Email Address" }).min(1, { message: "Email is required" }),
-  date: z.string().min(1, { message: "Resume Link is required" }),
-  time: z.string().min(1, { message: "Portfolio Link is required" }),
-  message: z.string().min(1, { message: "Additional message is required" })
+
+const FormSchema = z.object({
+  name: z.string().min(1, {
+    message: "Full name is required",
+    }),
+  email: z.string()
+    .email({ message: "Invalid Email Address",})
+    .min(1, { message: "Email is required",}),
+  date: z.date({
+    required_error: "Date is required",
+  }),
+  time: z.string().min(1, {
+    message: "Time is required",
+  }),
+  mess: z.string().min(1, {
+    message: "Additional message is required",
+  }),
 });
 
-type FormValues = z.infer<typeof formSchema>;
-
 export default function ContactForm() {
-  const [date, setDate] = React.useState<Date>()
-  
-  const form = useForm({
-    defaultValues: {
-      name: '',
-      email: '',
-      date: '',
-      time: '',
-      message: ''
-    },
-    resolver: zodResolver(formSchema),
-  });
+  const router = useRouter();
+  const [formId, setFormId] = useState(null)
+  const [isSubmitted, setIsSubmitted] = useState(false); 
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+  })
 
-  const onSubmit = useCallback((data: FormValues) => {
-    console.log('Form data:', data);
-  }, []);
+  const onSubmit = useCallback( async (data: z.infer<typeof FormSchema>) => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/form`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      setFormId(result.id)
+
+      localStorage.setItem('formId', result.id)
+      setIsSubmitted(true);
+      
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 10000); 
+      
+    } catch (error) {
+      console.error(error);
+    }
+  }, [router]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -51,14 +75,12 @@ export default function ContactForm() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 bg-white dark:bg-gray-600 p-6 rounded-md shadow-md">
-          
-          {/* Full Name Field */}
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-white">Full Name</FormLabel>
+                <FormLabel className="block text-sm font-medium text-primary dark:text-white">Full Name</FormLabel>
                 <FormControl>
                   <Input
                     type="text"
@@ -72,13 +94,12 @@ export default function ContactForm() {
             )}
           />
 
-          {/* Email Field */}
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-white">Email Address</FormLabel>
+                <FormLabel className="block text-sm font-medium text-primary dark:text-white">Email Address</FormLabel>
                 <FormControl>
                   <Input
                     type="email"
@@ -92,49 +113,50 @@ export default function ContactForm() {
             )}
           />
 
-          {/* Resume (Date) Field */}
           <FormField
             control={form.control}
             name="date"
-            render={() => (
+            render={({ field }) => (
               <FormItem>
-                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-white">Date</FormLabel>
-                <FormControl>
-                <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={"outline"}
-                    className={cn(
-                      "w-[280px] justify-start text-left font-normal",
-                      !date && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "PPP") : <span>Pick a date</span>}
-                  </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={date}
-                      onSelect={setDate}
-                      initialFocus
-                    /> 
-                  </PopoverContent>
-                </Popover>
-                </FormControl>
+                <FormLabel className="block text-sm font-medium text-primary dark:text-white">Date</FormLabel>
+                  <FormControl>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-[280px] justify-start text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value ? format(field.value, "PPP") : (<span>Pick a date</span>)}
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" >
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) => date < new Date() || date > new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)}
+                          initialFocus
+                        /> 
+                      </PopoverContent>
+                    </Popover>
+                  </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          {/* Portfolio (Time) Field */}
           <FormField
             control={form.control}
             name="time"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-white">Time</FormLabel>
+                <FormLabel className="block text-sm font-medium text-primary dark:text-white">Time</FormLabel>
                 <FormControl>
                   <Input
                     type="time"
@@ -147,13 +169,13 @@ export default function ContactForm() {
             )}
           />
 
-          {/* Additional Message Field */}
+          
           <FormField
             control={form.control}
-            name="message"
+            name="mess"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-white">Additional Message</FormLabel>
+                <FormLabel className="block text-sm font-medium text-primary dark:text-white">Additional Message</FormLabel>
                 <FormControl>
                   <Input
                     type="text"
@@ -167,11 +189,19 @@ export default function ContactForm() {
             )}
           />
 
-          {/* Submit Button */}
           <Button type="submit" className="w-full rounded-lg hover:bg-blue-950 border active:bg-gray-400">
             Submit for Review
           </Button>
         </form>
+        <Popover open={isSubmitted} onOpenChange={setIsSubmitted}
+        >
+        <PopoverTrigger asChild>
+          <span />
+        </PopoverTrigger>
+        <PopoverContent className='bg-green-600'>
+          Form submitted successfully! We'll contact you soon.
+        </PopoverContent>
+      </Popover>
       </Form>
     </div>
   );

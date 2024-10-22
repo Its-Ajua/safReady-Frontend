@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -41,7 +42,7 @@ export default function Submission() {
 
   const onSubmit = useCallback(async (data: FormValues) => {
     try {
-      const response = await fetch('http://localhost:8080/submissions', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/submissions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,12 +51,20 @@ export default function Submission() {
       });
       const result = await response.json();
       setSubmissionId(result.id);
-      router.push('/pending');
+      
+      
+      localStorage.setItem('submissionId', result.id);
+  
+      
+      setTimeout(() => {
+        router.push('/pending');
+      }, 10000); 
+      
     } catch (error) {
       console.error(error);
     }
-  }, [router]);
-
+  }, [router]);  
+  
   return (
     <div className="container mx-auto px-4 py-8">
       <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-blue-700">Submit Your Resume and Portfolio for Review</h2>
@@ -67,7 +76,7 @@ export default function Submission() {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-white">Full Name</FormLabel>
+                <FormLabel className="block text-sm font-medium text-primary dark:text-white">Full Name</FormLabel>
                 <FormControl>
                   <Input type="name" placeholder="Enter your name" className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"  
                   {...field} />
@@ -82,7 +91,7 @@ export default function Submission() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-white">Email Address</FormLabel>
+                <FormLabel className="block text-sm font-medium text-primary dark:text-white">Email Address</FormLabel>
                 <FormControl>
                   <Input type="email" placeholder="Enter a valid email address" className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"  
                     {...field} />
@@ -97,7 +106,7 @@ export default function Submission() {
             name="resume"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-white">Resume</FormLabel>
+                <FormLabel className="block text-sm font-medium text-primary dark:text-white">Resume</FormLabel>
                 <FormControl>
                   <Input type="url" placeholder="https://example.com/resume" className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"  
                     {...field} />
@@ -112,7 +121,7 @@ export default function Submission() {
             name="portfolio"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="block text-sm font-medium text-gray-700 dark:text-white">Portfolio</FormLabel>
+                <FormLabel className="block text-sm font-medium text-primary dark:text-white">Portfolio</FormLabel>
                 <FormControl>
                   <Input type="url" placeholder="https://example.com/portfolio" className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"  
                     {...field} />
@@ -122,9 +131,12 @@ export default function Submission() {
             )}
           />
 
-          <Button type="submit" className='w-full rounded-lg hover:bg-blue-950 border active:bg-gray-400'>
-            Submit for Review
-          </Button>
+          <div>
+            <Button type="submit" className='w-full rounded-lg hover:bg-blue-950 border active:bg-gray-400'>
+              Submit for Review
+            </Button>
+          </div>
+
         </form>
       </Form>
       {submissionId && (

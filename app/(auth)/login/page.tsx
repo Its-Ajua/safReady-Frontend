@@ -45,26 +45,22 @@ export default function LoginPage() {
         body: JSON.stringify(data),
       });
 
-      const result = await response.json();
-      console.log('Response:', result); // Log the response for debugging
+      const result = await response.json(); 
 
       if (response.ok) {
         if (result && result.ourUsers) {
-          // Save token and user info in localStorage
           localStorage.setItem('token', result.token);
           localStorage.setItem('user', JSON.stringify(result.ourUsers));
 
-          // Check user role and navigate accordingly
           if (result.ourUsers.role === 'Admin') {
-            router.push('/admin-dashboard'); // Redirect to admin dashboard
+            router.push('/admin-dashboard');
           } else {
-            router.push('/dashboard'); // Redirect to user dashboard
+            router.push('/dashboard');
           }
         } else {
           setErrorMessage('User data is missing in the response.');
         }
       } else {
-        // Set error message if response is not OK
         setErrorMessage(result.message || 'Sign-in failed: Incorrect credentials');
       }
     } catch (error) {

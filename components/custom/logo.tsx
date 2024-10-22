@@ -12,7 +12,7 @@ export function Logo({ href = "./"}: LogoProps) {
     <div>
         <Link href={href}>
         <div className='items-start'>
-            <h4 className='font-bold text-2xl text-primary'>GradGear</h4>
+            <h4 className='font-bold text-2xl text-primary'>SAFReady</h4>
         </div>
         </Link>
     </div>
