@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import SessionProviderWrapper from "@/components/sessionsproviderwrapper";
 import { ThemeProvider } from "@/components/ui/theme-provider";
+import { Head, NextScript } from "next/document";
 
 export const metadata: Metadata = {
   title: "safready",

@@ -32,7 +32,7 @@ const FormSchema = z.object({
   time: z.string().min(1, {
     message: "Time is required",
   }),
-  mess: z.string().min(1, {
+  message: z.string().min(1, {
     message: "Additional message is required",
   }),
 });
@@ -62,7 +62,7 @@ export default function ContactForm() {
       
       setTimeout(() => {
         router.push('/dashboard');
-      }, 10000); 
+      }, 5000); 
       
     } catch (error) {
       console.error(error);
@@ -172,7 +172,7 @@ export default function ContactForm() {
           
           <FormField
             control={form.control}
-            name="mess"
+            name="message"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="block text-sm font-medium text-primary dark:text-white">Additional Message</FormLabel>
