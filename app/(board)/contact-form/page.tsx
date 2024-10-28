@@ -2,7 +2,7 @@
 
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState,  useEffect} from 'react';
 import { useForm } from 'react-hook-form';
 import { z, date } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -39,13 +39,24 @@ const FormSchema = z.object({
 
 export default function ContactForm() {
   const router = useRouter();
-  const [formId, setFormId] = useState(null)
-  const [isSubmitted, setIsSubmitted] = useState(false); 
+  const [formId, setFormId] = useState<string | null>(null)
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [formStatus, setFormStatus] = useState("pending");
+  const [scheduledDate, setScheduledDate] = useState<Date | null>(null);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   })
 
-  const onSubmit = useCallback( async (data: z.infer<typeof FormSchema>) => {
+  useEffect(() => {
+    const savedFormId = localStorage.getItem('formId');
+    if (savedFormId) {
+      setFormId(savedFormId);
+      router.push(`/status?formId=${savedFormId}`);
+    }
+  }, [router]);
+
+  const onSubmit = useCallback(async (data: z.infer<typeof FormSchema>) => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/form`, {
         method: 'POST',
@@ -55,17 +66,9 @@ export default function ContactForm() {
         body: JSON.stringify(data),
       });
       const result = await response.json();
-      setFormId(result.id)
-
-      localStorage.setItem('formId', result.id)
-      setIsSubmitted(true);
-      
-      setTimeout(() => {
-        router.push('/dashboard');
-      }, 5000); 
-      
+      router.push(`/status?formId=${result.id}`);
     } catch (error) {
-      console.error(error);
+      console.error("Form submission error:", error);
     }
   }, [router]);
 
@@ -193,15 +196,6 @@ export default function ContactForm() {
             Submit for Review
           </Button>
         </form>
-        <Popover open={isSubmitted} onOpenChange={setIsSubmitted}
-        >
-        <PopoverTrigger asChild>
-          <span />
-        </PopoverTrigger>
-        <PopoverContent className='bg-green-600'>
-          Form submitted successfully! We'll contact you soon.
-        </PopoverContent>
-      </Popover>
       </Form>
     </div>
   );

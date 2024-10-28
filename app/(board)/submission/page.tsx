@@ -2,7 +2,7 @@
 
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -29,7 +29,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function Submission() {
   const router = useRouter();
-  const [submissionId, setSubmissionId] = useState(null);
+  const [submissionId, setSubmissionId] = useState<string | null>(null);
   const form = useForm({
     defaultValues: {
       name: '',
@@ -39,6 +39,14 @@ export default function Submission() {
     },
     resolver: zodResolver(formSchema),
   });
+
+  useEffect(() => {
+    const savedSubmissionId = localStorage.getItem('submissionId');
+    if (savedSubmissionId) {
+      setSubmissionId(savedSubmissionId);
+      router.push(`/pending/${savedSubmissionId}`);
+    }
+  }, [router]);
 
   const onSubmit = useCallback(async (data: FormValues) => {
     try {

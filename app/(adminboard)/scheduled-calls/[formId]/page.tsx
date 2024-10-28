@@ -29,9 +29,8 @@ const fetchFormReview = async (formId: string): Promise<AdminForm> => {
   return response.json();
 };
 
-// Update this function to use 'id' instead of 'formId'
 const fetchContactForm = async (id: string): Promise<ContactForm> => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/form/${id}`); // Changed 'formId' to 'id'
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/form/${id}`);
   if (!response.ok) {
     throw new Error("Form not found");
   }
@@ -39,9 +38,8 @@ const fetchContactForm = async (id: string): Promise<ContactForm> => {
 };
 
 export default function SessionPage() {
-  const { formId: id } = useParams<{ formId: string }>(); // Destructure 'formId' as 'id'
+  const { formId: id } = useParams<{ formId: string }>();
 
-  // Fetch both form review and contact form data
   const { data: reviewData, isLoading: loadingReview } = useQuery({
     queryKey: ["review", id],
     queryFn: () => fetchFormReview(id),
@@ -50,11 +48,10 @@ export default function SessionPage() {
 
   const { data: contactData, isLoading: loadingContact } = useQuery({
     queryKey: ["contact", id],
-    queryFn: () => fetchContactForm(id), // Pass 'id' to fetchContactForm
+    queryFn: () => fetchContactForm(id),
     enabled: !!id,
   });
 
-  // Show loading state while either query is loading
   if (loadingReview || loadingContact) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -103,7 +100,7 @@ export default function SessionPage() {
             interfaceConfigOverwrite={{
               SHOW_JITSI_WATERMARK: false,
             }}
-            getIFrameRef={(node) => (node.style.height = "600px")}
+            getIFrameRef={(node) => (node.style.height = "400px")}
           />
         </div>
       </div>

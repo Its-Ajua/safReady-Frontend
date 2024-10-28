@@ -1,8 +1,6 @@
 "use client";
 import { useEffect, useState } from 'react';;
 
-
-
 const PendingPage = () => {
   const [review, setReview] = useState(() => {
     const storedReview = localStorage.getItem('review');
