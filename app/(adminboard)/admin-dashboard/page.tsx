@@ -15,19 +15,19 @@ const DashBoardList = () => {
 
   const fetchStats = async () => {
     try {
-      const [totalUsers, reviewsSubmitted, liveSessionsScheduled] = await Promise.all([
+      const [usersResponse, resumesResponse, scheduledCallsResponse] = await Promise.all([
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`),
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/submissions`),
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/form`),
       ]);
 
-      if (!totalUsers.ok || !reviewsSubmitted || !liveSessionsScheduled) {
+      if (!usersResponse.ok || !resumesResponse.ok || !scheduledCallsResponse.ok) {
         throw new Error('Failed to fetch stats')
       }
 
-      const users = await totalUsers.json();
-      const resumes = await reviewsSubmitted.json();
-      const scheduledCalls = await liveSessionsScheduled.json();
+      const users = await usersResponse.json();
+      const resumes = await resumesResponse.json();
+      const scheduledCalls = await scheduledCallsResponse.json();
 
       setStats({
         totalUsers: users.length,
@@ -40,6 +40,7 @@ const DashBoardList = () => {
     } finally {
       setIsLoading(false);
     }
+  }
 
     useEffect(() => {
       fetchStats();
@@ -49,14 +50,12 @@ const DashBoardList = () => {
       return 
       <Loader2 className="animate-spin"/>
     if (error) return <p>Error: {error}</p>;
-    }
+    
   return (
     <div className="min-h-screen shadow-xl flex flex-col items-center justify-center py-10">
 
-      {/* Welcome Message */}
       <h1 className="text-3xl font-semibold mb-6 text-gray-800 text-center">Welcome SAFReady Admin!</h1>
 
-      {/* Stats Boxes */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-10 w-full max-w-5xl">
         <div className="bg-white text-center p-6 rounded-xl shadow-lg">
           <h2 className="text-4xl font-bold text-blue-900">{stats.totalUsers}</h2>

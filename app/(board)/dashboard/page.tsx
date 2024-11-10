@@ -1,8 +1,20 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import React, { useEffect } from 'react';
 import { FaCheckCircle, FaClipboardList, FaEnvelope } from 'react-icons/fa';
-
+import Autoplay from "embla-carousel-autoplay";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 const checklistItems = [
   {
@@ -10,7 +22,6 @@ const checklistItems = [
     description: "Are you a tech professional navigating the competitive job market? Our Job Search Checklist is designed for young tech talents like you, simplifying the job search process into actionable steps to help you stand out and be prepared.",
     link: '/checklist',
     icon: <FaClipboardList className="text-blue-900" />,
-    completed: false,
   },
   {
     title: 'Resume/Portfolio Review',
@@ -26,44 +37,133 @@ const checklistItems = [
   },
 ];
 
-const DashBoardList = () => {
-  // State to store the number of completed checklists
-  const [checklistsDone, setChecklistsDone] = useState(0);
-  const [submissionsDone, setSubmissionsDone] = useState(0);
-  const [sessionsDone, setSessionsDone] = useState(0);
+const resources = [
+  {
+    title: 'LinkedIn Tips',
+    description: 'Learn how to optimize your LinkedIn profile to attract recruiters.',
+    link: 'https://www.linkedin.com/help/linkedin/answer/15/optimizing-your-profile?lang=en',
+  },
+  {
+    title: 'Interview Preparation Guide',
+    description: 'Get tips and resources to prepare for job interviews effectively.',
+    link: 'https://www.thebalancecareers.com/interview-preparation-tips-2060995',
+  },
+  {
+    title: 'Networking Strategies',
+    description: 'Discover effective strategies for networking in the tech industry.',
+    link: 'https://www.forbes.com/sites/forbescoachescouncil/2021/07/23/networking-strategies-for-technical-professionals/?sh=2c2bdfbb6c36',
+  },
+];
 
-  // Use effect to fetch the number of completed checklists from the backend
+const reviews = [
+  {
+    reviewer: 'Jane Doe',
+    feedback: 'The Job Search Checklist was a game changer for me! I landed my first job in tech.',
+  },
+  {
+    reviewer: 'John Smith',
+    feedback: 'I love the Resume/Portfolio Review feature. The feedback I received was incredibly helpful!',
+  },
+  {
+    reviewer: 'Emily Johnson',
+    feedback: 'The resources provided are very insightful. Highly recommend to anyone looking for a job in tech!',
+  },
+];
+
+export function CarouselPlugin() {
+  const plugin = React.useRef(Autoplay({ delay: 2000, stopOnInteraction: true }));
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/checklists/completed-count`)
-      .then((response) => response.json())
-      .then((data) => setChecklistsDone(data))
-      .catch((error) => console.error(error));
-  }, []);
-  return (
-    <div className="min-h-screen shadow-xl flex flex-col items-center justify-center py-10">
+    AOS.init();
+  }, [])
 
-      
-      <h1 className="text-3xl font-semibold mb-6 text-gray-900 dark:text-blue-700 text-center">Welcome to Your SAFReady!</h1>
-      <h4 className="text-gray-600 text-center mb-8 px-4">
+  return (
+    <Carousel
+      plugins={[plugin.current]}
+      className="w-full max-w-5xl"
+      onMouseEnter={plugin.current.stop}
+      onMouseLeave={plugin.current.reset}
+    >
+      <CarouselContent>
+        {resources.map((resource, index) => (
+          <CarouselItem key={index}>
+            <div className="p-1"> 
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center p-6">
+                  <h3 className="text-lg font-semibold text-gray-800">{resource.title}</h3>
+                  <p className="text-gray-600 mt-2">
+                    <a
+                      href={resource.link}
+                      className="text-blue-600 hover:underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {resource.description}
+                    </a>
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselPrevious />
+      <CarouselNext />
+    </Carousel>
+  );
+}
+
+export function ReviewsCarousel() {
+  const plugin = React.useRef(Autoplay({ delay: 3000, stopOnInteraction: true }));
+  useEffect(() => {
+    AOS.init({
+    duration: 800,
+      once: true,
+    });
+  }, [])
+
+  return (
+    <Carousel
+      plugins={[plugin.current]}
+      className="w-full max-w-5xl mt-10"
+      onMouseEnter={plugin.current.stop}
+      onMouseLeave={plugin.current.reset}
+    >
+      <CarouselContent>
+        {reviews.map((review, index) => (
+          <CarouselItem key={index} >
+            <div className="p-1">
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center p-6">
+                  <h4 className="text-lg font-semibold text-gray-800">{review.reviewer}</h4>
+                  <p className="text-gray-600 mt-2 italic">{review.feedback}</p>
+                </CardContent>
+              </Card>
+            </div>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselPrevious />
+      <CarouselNext />
+    </Carousel>
+  );
+}
+
+const DashBoardList = () => {
+  useEffect(() => {
+      AOS.init();
+    }, [])
+
+  return (
+    <div className="min-h-screen shadow-xl flex flex-col items-center justify-center py-10" >
+      <div className="text-3xl font-semibold mb-6 text-gray-900 dark:text-blue-700 text-center" data-aos="zoom-in-up" >
+        Welcome to Your SAFReady!
+      </div>
+      <h4 className="text-gray-600 text-center mb-8 px-4" data-aos="fade-right">
         Ready to elevate your career? Explore tailored resources to sharpen your skills, get feedback on your resume or portfolio, and schedule guidance sessions to stay ahead in your job search.
       </h4>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-10 w-full max-w-5xl">
-        <div className="bg-white dark:bg-gray-700 text-center p-6 rounded-xl shadow-lg">
-          <h2 className="text-4xl font-bold text-blue-900 dark:text-black">{checklistsDone}</h2>
-          <p className="text-lg text-gray-700 dark:text-white mt-2">Checklists Completed</p>
-        </div>
-        <div className="bg-white text-center dark:bg-gray-700 p-6 rounded-xl shadow-lg">
-          <h2 className="text-4xl font-bold text-blue-900 dark:text-black">{submissionsDone}</h2>
-          <p className="text-lg text-gray-700  dark:text-white mt-2">Resumes Uploaded</p>
-        </div>
-        <div className="bg-white text-center p-6 dark:bg-gray-700 rounded-xl shadow-lg">
-          <h2 className="text-4xl font-bold text-blue-900 dark:text-black">{sessionsDone}</h2>
-          <p className="text-lg text-gray-700  dark:text-white mt-2">Live Sessions Scheduled</p>
-        </div>
-      </div>
+      <CarouselPlugin />
 
-      {/* Checklist Items */}
       <ul className="block lg:flex mt-10 space-y-6 lg:space-y-0 lg:space-x-6 w-full max-w-5xl">
         {checklistItems.map((item, index) => (
           <li
@@ -75,22 +175,21 @@ const DashBoardList = () => {
               <span>{item.title}</span>
             </h3>
             <p className="text-gray-600 dark:text-black mt-3">{item.description}</p>
-            <a
-              href={item.link}
-              rel="noopener noreferrer"
-              className="mt-4 inline-block bg-blue-900 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
-            >
-              Start Your Journey
-            </a>
+            <Button asChild>
+              <Link href={item.link} className="mt-4 bg-blue-900 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition">
+                Start Your Journey
+              </Link>
+            </Button>
           </li>
         ))}
       </ul>
 
-
-      {/* Success Stories */}
-      <div className="mt-12 p-6 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-lg text-center w-full max-w-5xl">
-        <h2 className="text-lg font-semibold text-gray-800 dark:text-blue-600 ">Success Stories</h2>
-        <p className="text-gray-600 dark:text-black italic mt-2">&quot;Thanks to the Resume Review feature, I landed my dream job!&quot; - Jane Doe</p>
+      {/* Slideshow for Reviews */}
+      <div className="mt-10">
+        <h3 className="text-2xl font-semibold text-gray-900 dark:text-blue-700 text-center mb-6">
+          What Our Users Say
+        </h3>
+        <ReviewsCarousel />
       </div>
     </div>
   );

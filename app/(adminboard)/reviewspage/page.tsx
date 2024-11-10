@@ -1,11 +1,8 @@
 'use client';
 
-import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   ColumnDef,
-  ColumnFiltersState,
   SortingState,
   VisibilityState,
   flexRender,
@@ -16,9 +13,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import {
-  CaretSortIcon,
   ChevronDownIcon,
-  DotsHorizontalIcon,
 } from "@radix-ui/react-icons" 
 import {
   Table,
@@ -30,15 +25,9 @@ import {
 } from "@/components/ui/table"
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-
-import { MoreHorizontal } from "lucide-react"
- 
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu"
@@ -112,7 +101,7 @@ export const columns: ColumnDef<Submission>[] = [
         return (
           <a
             href={`/feedback/${submissionId}`}
-            className="text-red-600 underline"
+            className="text-yellow-600 underline"
           >
             pending
           </a>
@@ -171,8 +160,8 @@ const SubmissionsPage = () => {
             const review = await fetchReview(submission.id); 
             return {
               ...submission,
-              status: review.status || "pending",
-              feedback: review.feedback || "",
+              status: review?.status || "pending",
+              feedback: review?.feedback || "",
             };
           })
         );
@@ -183,8 +172,12 @@ const SubmissionsPage = () => {
       ];
   
         setSubmissions(rearrangedSubmissions);
-      } catch (error: any) {
-        setError(error.message || 'An error occurred');
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError('An unknown error occurred');
+        }
       } finally {
         setLoading(false);
       }
@@ -210,6 +203,10 @@ const SubmissionsPage = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <h2 className="text-2xl font-semibold mb-4">User  Submissions</h2>
+
+            {loading && <div>Loading...</div>}
+            
+            {error && <div className="text-red-600">{error}</div>}
 
             <div className="w-full">
             <div className="flex items-center py-4">

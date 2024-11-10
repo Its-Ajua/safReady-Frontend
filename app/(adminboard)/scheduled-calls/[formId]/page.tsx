@@ -5,6 +5,7 @@ import React from "react";
 import { JitsiMeeting } from "@jitsi/react-sdk";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
+import DashBoardList from "@/app/(board)/dashboard/page";
 
 interface ContactForm {
   id: string;
@@ -60,7 +61,7 @@ export default function SessionPage() {
     );
   }
 
-  // Show error state if either data is missing
+ 
   if (!reviewData || !contactData) {
     console.log("Review Data:", reviewData);
     console.log("Contact Data:", contactData);
@@ -71,8 +72,6 @@ export default function SessionPage() {
     );
   }
 
-
-  // Verify that the session is approved
   if (reviewData.status !== "approved") {
     return (
       <div className="flex justify-center items-center min-h-screen">

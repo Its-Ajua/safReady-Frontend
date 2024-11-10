@@ -1,6 +1,7 @@
 "use client"
 
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
+import { format, parse, isBefore, isAfter } from 'date-fns';
 import { Input } from '@/components/ui/input';
 import React, { useCallback, useState,  useEffect} from 'react';
 import { useForm } from 'react-hook-form';
@@ -12,7 +13,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { format, isPast, isToday } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Calendar } from "@/components/ui/calendar"
@@ -48,13 +48,24 @@ export default function ContactForm() {
     resolver: zodResolver(FormSchema),
   })
 
+  const minDate = new Date();
+  const maxDate = new Date();
+  maxDate.setDate(maxDate.getDate() + 14);
+
+  const formattedMinDate = format(minDate, "MMM dd, yyyy");
+  const formattedMaxDate = format(maxDate, "MMM dd, yyyy");
+
+  const isDateDisabled = (date: Date): boolean => {
+    const formattedDate = format(date, "MMM dd, yyyy");
+    const parsedMinDate = parse(formattedMinDate, "MMM dd, yyyy", new Date());
+    const parsedMaxDate = parse(formattedMaxDate, "MMM dd, yyyy", new Date());
+    
+    return isBefore(date, parsedMinDate) || isAfter(date, parsedMaxDate);
+  };
+
   useEffect(() => {
-    const savedFormId = localStorage.getItem('formId');
-    if (savedFormId) {
-      setFormId(savedFormId);
-      router.push(`/status?formId=${savedFormId}`);
-    }
-  }, [router]);
+    localStorage.removeItem('formId');
+  }, []);
 
   const onSubmit = useCallback(async (data: z.infer<typeof FormSchema>) => {
     try {
@@ -66,6 +77,7 @@ export default function ContactForm() {
         body: JSON.stringify(data),
       });
       const result = await response.json();
+      localStorage.setItem('formId', result.id); 
       router.push(`/status?formId=${result.id}`);
     } catch (error) {
       console.error("Form submission error:", error);
@@ -76,6 +88,7 @@ export default function ContactForm() {
     <div className="container mx-auto px-4 py-8">
       <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-blue-800">Schedule a Live Call</h2>
 
+      
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 bg-white dark:bg-gray-600 p-6 rounded-md shadow-md">
           <FormField
@@ -143,7 +156,7 @@ export default function ContactForm() {
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) => date < new Date() || date > new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)}
+                          disabled={isDateDisabled}
                           initialFocus
                         /> 
                       </PopoverContent>
@@ -193,7 +206,7 @@ export default function ContactForm() {
           />
 
           <Button type="submit" className="w-full rounded-lg hover:bg-blue-950 border active:bg-gray-400">
-            Submit for Review
+            Submit
           </Button>
         </form>
       </Form>

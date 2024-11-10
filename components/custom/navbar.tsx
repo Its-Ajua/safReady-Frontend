@@ -34,32 +34,10 @@ export function Navbar({ href = "./"}: NavProps) {
           
 
           <div className='flex items-center'>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" className='mr-4 bg-blue-950 dark:bg-transparent p-0 hover:bg-gray-600'>
-                <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-black dark:text-white" />
-                <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                <span className="sr-only">Toggle theme</span>
-              </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setTheme("light")}>
-                  Light
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>
-                  Dark
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>
-                  System
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          
-          
           <DropdownMenu>
             <DropdownMenuTrigger className='focus:outline-none'><Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarImage src="/images/my-profile-icon.png" />
+              <AvatarFallback>P</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -74,6 +52,28 @@ export function Navbar({ href = "./"}: NavProps) {
                 <Link href="/">
                 Logout
                 </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon" className='mr-4 bg-blue-950 dark:bg-transparent p-0 hover:bg-gray-600'>
+                  <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-black dark:text-white" />
+                  <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                  <span className="sr-only">Toggle theme</span>
+                </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" >
+                  <DropdownMenuItem onClick={() => setTheme("light")}>
+                    Light
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setTheme("dark")}>
+                    Dark
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setTheme("system")}>
+                    System
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

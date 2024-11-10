@@ -30,6 +30,8 @@ type FormValues = z.infer<typeof formSchema>;
 export default function Submission() {
   const router = useRouter();
   const [submissionId, setSubmissionId] = useState<string | null>(null);
+  const [previousReview, setPreviousReview] = useState<string | null>(null);
+  
   const form = useForm({
     defaultValues: {
       name: '',
@@ -40,15 +42,7 @@ export default function Submission() {
     resolver: zodResolver(formSchema),
   });
 
-  useEffect(() => {
-    const savedSubmissionId = localStorage.getItem('submissionId');
-    if (savedSubmissionId) {
-      setSubmissionId(savedSubmissionId);
-      router.push(`/pending/${savedSubmissionId}`);
-    }
-  }, [router]);
-
-  const onSubmit = useCallback(async (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/submissions`, {
         method: 'POST',
@@ -58,20 +52,17 @@ export default function Submission() {
         body: JSON.stringify(data),
       });
       const result = await response.json();
-      setSubmissionId(result.id);
-      
-      
-      localStorage.setItem('submissionId', result.id);
-  
-      
-      setTimeout(() => {
-        router.push('/pending');
-      }, 10000); 
-      
+      if (response.ok) {
+        setSubmissionId(result.id);
+        localStorage.setItem('submissionId', result.id);
+        router.push(`/pending/${result.id}`);
+      } else {
+        console.error('Submission failed:', result.message);
+      }
     } catch (error) {
       console.error(error);
     }
-  }, [router]);  
+  };
   
   return (
     <div className="container mx-auto px-4 py-8">
@@ -153,8 +144,14 @@ export default function Submission() {
         <p>Your submission ID is: <span className="font-bold">{submissionId}</span></p>
         <p>We will notify you once your resume and portfolio have been reviewed.</p>
       </div>
-)}
+      )}
 
+      {previousReview && (
+        <div className="mt-6 p-4 bg-gray-100 text-gray-800 rounded-lg">
+          <h3 className="text-lg font-semibold">Previous Review</h3>
+          <p>{previousReview}</p>
+        </div>
+      )}
     </div>
   );
 };

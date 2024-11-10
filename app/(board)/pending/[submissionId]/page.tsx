@@ -1,45 +1,64 @@
-"use client";
-import { useEffect, useState } from 'react';;
+"use client"
 
-const PendingPage = () => {
-  const [review, setReview] = useState(() => {
-    const storedReview = localStorage.getItem('review');
-    return storedReview ? JSON.parse(storedReview) : { status: 'pending', feedback: '' };
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+
+interface Review {
+  status: string;
+  feedback: string | null;
+}
+
+const PendingPage: React.FC = () => {
+  const { submissionId } = useParams();
+
+  const [review, setReview] = useState<Review>({
+    status: 'pending',
+    feedback: null,
   });
   const [isLoading, setIsLoading] = useState(true);
-
-  const fetchReviewStatus = async () => {
-    try {
-      const submissionId = localStorage.getItem('submissionId');
-      const response = await fetch(`http://localhost:8080/auth/reviews/${submissionId}`);
-      if (!response.ok) throw new Error('Failed to fetch review');
-      const result = await response.json();
-      setReview(result);
-      localStorage.setItem('review', JSON.stringify(result));
-    } catch (error) {
-      console.error('Error fetching review:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const interval = setInterval(fetchReviewStatus, 5000); // Poll every 5 seconds
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, []);
+    const fetchReviewFeedback = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/reviews/${submissionId}`
+        );
 
-  if (isLoading) return <p>Loading...</p>;
+        if (!response.ok) {
+          throw new Error(`Failed to fetch data: ${response.statusText}`);
+        }
+
+        const data: Review = await response.json();
+        setReview(data);
+      } catch (err) {
+        console.error('Error fetching review feedback:', err);
+        setError('Failed to load feedback. Please try again later.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (submissionId) {
+      fetchReviewFeedback();
+    }
+  }, [submissionId]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h2 className="text-2xl font-semibold mb-4">Your Submission Status</h2>
-      {review.status === 'pending' ? (
-        <p className="text-gray-600">Your submission is still pending review.</p>
-      ) : (
+    <div className="container mx-auto px-4 py-8 space-y-6 bg-white dark:bg-gray-600 p-6 rounded-md shadow-md">
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p className="text-red-600">{error}</p>
+      ) : review.status === 'pending' ? (
+        <p>Your submission is still pending review.</p>
+      ) : review.status === 'reviewed' && review.feedback ? (
         <>
-          <p className="text-green-600">Your submission has been reviewed!</p>
+          <p>Your submission has been reviewed!</p>
           <p><strong>Feedback:</strong> {review.feedback}</p>
         </>
+      ) : (
+        <p>No feedback has been provided yet.</p>
       )}
     </div>
   );

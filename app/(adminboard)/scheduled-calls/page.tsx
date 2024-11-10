@@ -30,10 +30,8 @@ import {
 } from "@tanstack/react-table";
 import React, { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
-
-// Interfaces
 interface ContactForm {
   id: string;
   name: string;
@@ -43,7 +41,6 @@ interface ContactForm {
   message: string;
 }
 
-// Add AdminForm interface with formId
 interface AdminForm {
   formId: string;
   status: string;
@@ -159,6 +156,9 @@ const columns: ColumnDef<ContactForm>[] = [
 ];
 
 const SchedulePage = () => {
+  const params = useParams();
+  const formId = params.formId; 
+
   const [contactForms, setContactForms] = useState<ContactForm[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -226,7 +226,7 @@ const SchedulePage = () => {
       return await response.json();
     } catch (error) {
       console.error("Error fetching review:", error);
-      return { formId, status: "pending", feedback: "" }; // Updated to include formId
+      return { formId, status: "pending", feedback: "" };
     }
   };
 

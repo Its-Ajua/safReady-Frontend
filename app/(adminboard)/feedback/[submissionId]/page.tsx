@@ -53,10 +53,10 @@ const AdminReviewPage = () => {
 
       const result = await response.json();
       console.log('Submission successful:', result);
-      setIsReviewSubmitted(true);
+      setIsReviewSubmitted(true); 
       router.push('/reviewspage');
     } catch (error) {
-      console.error('Error submitting review:', {error});
+      console.error('Error submitting review:', { error });
       setErrorMessage('Failed to submit review. Please try again.');
     }
   };
