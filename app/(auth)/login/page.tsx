@@ -1,15 +1,22 @@
-"use client"
+"use client";
 
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import React, { useCallback, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import React, { useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -24,58 +31,68 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
   const form = useForm<FormValues>({
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
     resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = useCallback(async (data: FormValues) => {
-    setErrorMessage('');
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signin`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+  const onSubmit = useCallback(
+    async (data: FormValues) => {
+      setErrorMessage("");
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/signin`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          },
+        );
 
-      const result = await response.json(); 
+        const result = await response.json();
 
-      if (response.ok) {
-        if (result && result.ourUsers) {
-          localStorage.setItem('token', result.token);
-          localStorage.setItem('user', JSON.stringify(result.ourUsers));
-          localStorage.setItem('userId', result.ourUsers.id);
-          if (result.ourUsers.role === 'Admin') {
-            router.push('/admin-dashboard');
+        if (response.ok) {
+          if (result && result.ourUsers) {
+            localStorage.setItem("token", result.token);
+            localStorage.setItem("user", JSON.stringify(result.ourUsers));
+            localStorage.setItem("userId", result.ourUsers.id);
+            if (result.ourUsers.role === "Admin") {
+              router.push("/admin-dashboard");
+            } else {
+              router.push("/dashboard");
+            }
           } else {
-            router.push('/dashboard');
+            setErrorMessage("User data is missing in the response.");
           }
         } else {
-          setErrorMessage('User data is missing in the response.');
+          setErrorMessage(
+            result.message || "Sign-in failed: Incorrect credentials",
+          );
         }
-      } else {
-        setErrorMessage(result.message || 'Sign-in failed: Incorrect credentials');
+      } catch (error) {
+        console.error("Error during sign-in:", error);
+        setErrorMessage("An error occurred during sign-in. Please try again.");
       }
-    } catch (error) {
-      console.error('Error during sign-in:', error);
-      setErrorMessage('An error occurred during sign-in. Please try again.');
-    }
-  }, [router]);
+    },
+    [router],
+  );
 
   return (
     <>
-      <h1 className='text-primary font-bold text-3xl'>Login to your Account</h1>
-      <p className='text-primary mt-2 font-medium'>with your registered Email Address</p>
+      <h1 className="text-primary font-bold text-3xl">Login to your Account</h1>
+      <p className="text-primary mt-2 font-medium">
+        with your registered Email Address
+      </p>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-5 mt-7'>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 mt-7">
           <FormField
             control={form.control}
             name="email"
@@ -83,7 +100,12 @@ export default function LoginPage() {
               <FormItem>
                 <FormLabel>Email Address</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="Enter email address" className='placeholder:text-primary' {...field} />
+                  <Input
+                    type="email"
+                    placeholder="Enter email address"
+                    className="placeholder:text-primary"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -97,7 +119,12 @@ export default function LoginPage() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="Enter Password" className='placeholder:text-primary' {...field} />
+                  <Input
+                    type="password"
+                    placeholder="Enter Password"
+                    className="placeholder:text-primary"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -106,7 +133,10 @@ export default function LoginPage() {
 
           <div className="flex items-center space-x-2">
             <Checkbox id="remember" />
-            <label htmlFor="remember" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            <label
+              htmlFor="remember"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
               Remember my password
             </label>
           </div>
@@ -114,18 +144,26 @@ export default function LoginPage() {
           {errorMessage && <p className="text-red-500">{errorMessage}</p>}
 
           <div>
-            <Button type="submit" className='w-full rounded-lg hover:bg-blue-950 border active:bg-gray-400'>
+            <Button
+              type="submit"
+              className="w-full rounded-lg hover:bg-blue-950 border active:bg-gray-400"
+            >
               Sign In
             </Button>
           </div>
 
-          <div className='flex items-center space-x-2'>
+          <div className="flex items-center space-x-2">
             {["", "Or", ""].map((text, index) => {
               if (text === "") {
-                return <div key={index} className="w-full border-b border-border" />;
+                return (
+                  <div key={index} className="w-full border-b border-border" />
+                );
               } else {
                 return (
-                  <span key={index} className="text-sm font-medium leading-none">
+                  <span
+                    key={index}
+                    className="text-sm font-medium leading-none"
+                  >
                     {text}
                   </span>
                 );
@@ -134,18 +172,19 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <Button type="button" className="w-full rounded-lg">
-              <Link href="/register"> Sign Up</Link>
-            </Button>
+            <Link href="/register">
+              <Button type="button" className="w-full rounded-lg">
+                Sign Up
+              </Button>
+            </Link>
           </div>
         </form>
       </Form>
 
       <div className="mt-10 text-center">
-        <Link href="/forgot-password">
-          Forgot Password
-        </Link>
+        <Link href="/forgot-password">Forgot Password</Link>
       </div>
     </>
   );
 }
+
