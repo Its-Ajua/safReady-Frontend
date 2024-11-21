@@ -149,7 +149,7 @@ const SubmissionsPage = () => {
   useEffect(() => {
     const fetchSubmissionsAndReviews = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/submissions`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/submissions`);
         if (!response.ok) {
           throw new Error('Failed to fetch submissions');
         }
@@ -188,7 +188,7 @@ const SubmissionsPage = () => {
 
   const fetchReview = async (submissionId: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/reviews/${submissionId}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reviews/${submissionId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch review');
       }

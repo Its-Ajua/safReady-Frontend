@@ -17,8 +17,8 @@ const DashBoardList = () => {
     try {
       const [usersResponse, resumesResponse, scheduledCallsResponse] = await Promise.all([
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`),
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/submissions`),
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/form`),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/submissions`),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/form`),
       ]);
 
       if (!usersResponse.ok || !resumesResponse.ok || !scheduledCallsResponse.ok) {

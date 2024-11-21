@@ -22,7 +22,7 @@ const PendingPage: React.FC = () => {
     const fetchReviewFeedback = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/reviews/${submissionId}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/reviews/${submissionId}`,
         );
 
         if (!response.ok) {

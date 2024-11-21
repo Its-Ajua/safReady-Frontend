@@ -56,7 +56,7 @@ export default function Submission() {
   const onSubmit = async (data: FormValues) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/submissions`,
+        `${process.env.NEXT_PUBLIC_API_URL}/submissions`,
         {
           method: "POST",
           headers: {

@@ -23,7 +23,7 @@ interface AdminForm {
 }
 
 const fetchFormReview = async (formId: string): Promise<AdminForm> => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/form-reviews/${formId}`);
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/form-reviews/${formId}`);
   if (!response.ok) {
     throw new Error("Review not found");
   }
@@ -31,7 +31,7 @@ const fetchFormReview = async (formId: string): Promise<AdminForm> => {
 };
 
 const fetchContactForm = async (id: string): Promise<ContactForm> => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/form/${id}`);
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/form/${id}`);
   if (!response.ok) {
     throw new Error("Form not found");
   }

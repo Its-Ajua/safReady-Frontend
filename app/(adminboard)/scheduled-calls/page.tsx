@@ -187,7 +187,7 @@ const SchedulePage = () => {
     const fetchScheduledCalls = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/form`
+          `${process.env.NEXT_PUBLIC_API_URL}/form`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch submissions");
@@ -218,7 +218,7 @@ const SchedulePage = () => {
   const fetchAdminForm = async (formId: string): Promise<AdminForm> => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/form-reviews/${formId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/form-reviews/${formId}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch review");

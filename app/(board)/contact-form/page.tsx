@@ -67,7 +67,7 @@ export default function ContactForm() {
             const payload = { ...rest, date: utcDate.toISOString() };
 
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/form`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/form`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

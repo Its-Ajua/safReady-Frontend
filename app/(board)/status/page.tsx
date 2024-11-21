@@ -25,7 +25,7 @@ export default function StatusPage() {
 
       // Fetching form-reviews status using formId
       const statusResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/form-reviews/${formId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/form-reviews/${formId}`,
       );
       if (!statusResponse.ok) {
         throw new Error(
@@ -39,7 +39,7 @@ export default function StatusPage() {
       if (statusResult.status === "approved") {
         // Fetch the scheduled date using id (which is set from formId)
         const dateResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/form/${id}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/form/${id}`,
         );
         console.log(dateResponse);
         if (!dateResponse.ok) {
