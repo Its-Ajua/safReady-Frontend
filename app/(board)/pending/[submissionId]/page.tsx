@@ -21,8 +21,15 @@ const PendingPage: React.FC = () => {
   useEffect(() => {
     const fetchReviewFeedback = async () => {
       try {
+        const token = localStorage.getItem("token");
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/reviews/${submissionId}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/reviews/${submissionId}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+          },
+          }
         );
 
         if (!response.ok) {

@@ -15,10 +15,16 @@ const DashBoardList = () => {
 
   const fetchStats = async () => {
     try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
       const [usersResponse, resumesResponse, scheduledCallsResponse] = await Promise.all([
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`),
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/submissions`),
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/form`),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/users`, { headers }),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/submissions`, { headers }),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/form`, { headers }),
       ]);
 
       if (!usersResponse.ok || !resumesResponse.ok || !scheduledCallsResponse.ok) {

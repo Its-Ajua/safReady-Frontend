@@ -94,12 +94,14 @@ const columns: ColumnDef<ContactForm>[] = [
       const updateStatus = async (formId: string, newStatus: string) => {
         const feedback = newStatus === "approved" ? "Your submission has been approved." : ""; 
         try {
+          const token = localStorage.getItem("token");
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/auth/form-reviews`, 
+                `${process.env.NEXT_PUBLIC_API_URL}/form-reviews`, 
                 {
                     method: 'POST', 
                     headers: {
                         'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
                     },
                 body: JSON.stringify({ formId, status: newStatus, feedback }),
             }
@@ -186,9 +188,15 @@ const SchedulePage = () => {
   useEffect(() => {
     const fetchScheduledCalls = async () => {
       try {
+        const token = localStorage.getItem("token");
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/form`
-        );
+          `${process.env.NEXT_PUBLIC_API_URL}/form`, {
+            method: "GET",
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+      });
         if (!response.ok) {
           throw new Error("Failed to fetch submissions");
         }
@@ -217,8 +225,15 @@ const SchedulePage = () => {
 
   const fetchAdminForm = async (formId: string): Promise<AdminForm> => {
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/form-reviews/${formId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/form-reviews/${formId}`, {
+          method: "GET",
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+        }
       );
       if (!response.ok) {
         throw new Error("Failed to fetch review");

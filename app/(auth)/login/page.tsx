@@ -59,6 +59,7 @@ export default function LoginPage() {
         const result = await response.json();
 
         if (response.ok) {
+          console.info({result})
           if (result && result.ourUsers) {
             localStorage.setItem("token", result.token);
             localStorage.setItem("user", JSON.stringify(result.ourUsers));

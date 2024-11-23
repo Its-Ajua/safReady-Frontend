@@ -18,18 +18,33 @@ export default function StatusPage() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchStatus = useCallback(async () => {
-    if (!id) return;
+    if (!id) {
+      console.error("No form ID provided");
+      return;
+    }
+
+    console.log("Form ID:", id);
+    console.log("API URL:", `${process.env.NEXT_PUBLIC_API_URL}/form-reviews/${formId}`);
+
+    const token = localStorage.getItem("token");
+    console.log("Token:", token ? "Present" : "Missing");
 
     try {
       setIsLoading(true);
 
-      // Fetching form-reviews status using formId
       const statusResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/form-reviews/${formId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       if (!statusResponse.ok) {
         throw new Error(
-          `Failed to fetch form reviews status: ${statusResponse.status}`,
+          `Failed to fetch form reviews status: ${statusResponse.status}`
         );
       }
 
@@ -37,14 +52,20 @@ export default function StatusPage() {
       setStatus(statusResult.status);
 
       if (statusResult.status === "approved") {
-        // Fetch the scheduled date using id (which is set from formId)
         const dateResponse = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/form/${id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         console.log(dateResponse);
         if (!dateResponse.ok) {
           throw new Error(
-            `Failed to fetch form scheduled date: ${dateResponse.status}`,
+            `Failed to fetch form scheduled date: ${dateResponse.status}`
           );
         }
 
@@ -57,7 +78,7 @@ export default function StatusPage() {
       }
     } catch (error: any) {
       console.error("Error fetching form status:", error);
-      setError("Unable to fetch form status. Please try again later.");
+      setError("blah blah blah is pending");
     } finally {
       setIsLoading(false);
     }

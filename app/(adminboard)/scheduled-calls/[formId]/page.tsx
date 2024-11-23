@@ -23,7 +23,13 @@ interface AdminForm {
 }
 
 const fetchFormReview = async (formId: string): Promise<AdminForm> => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/form-reviews/${formId}`);
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/form-reviews/${formId}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    },
+  });
   if (!response.ok) {
     throw new Error("Review not found");
   }
@@ -31,7 +37,13 @@ const fetchFormReview = async (formId: string): Promise<AdminForm> => {
 };
 
 const fetchContactForm = async (id: string): Promise<ContactForm> => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/form/${id}`);
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/form/${id}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    },
+  });
   if (!response.ok) {
     throw new Error("Form not found");
   }

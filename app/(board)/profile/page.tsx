@@ -21,10 +21,12 @@ export default function UserProfile() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
+        const token = localStorage.getItem("token");
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/user/${userId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `${token}`
           },
         });
 

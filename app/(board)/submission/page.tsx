@@ -9,13 +9,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -37,37 +36,52 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function Submission() {
   const router = useRouter();
-  const [submissionId, setSubmissionId] = useState<string | null>(null);
-  const [previousReview, setPreviousReview] = useState<string | null>(null);
+  const [user, setUser] = useState({ firstname: "", lastname: "", email: "" });
 
-  const { firstname, lastname, email } = JSON.parse(
-    localStorage.getItem("user") || "",
-  );
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+      } catch (error) {
+        console.error("Invalid user data in localStorage:", error);
+      }
+    }
+  }, []);
+
   const form = useForm({
     defaultValues: {
-      name: firstname && lastname ? `${firstname} ${lastname}` : "",
-      email: email ?? "",
+      name: user.firstname && user.lastname ? `${user.firstname} ${user.lastname}` : "",
+      email: user.email ?? "",
       resume: "",
       portfolio: "",
     },
     resolver: zodResolver(formSchema),
   });
 
+  useEffect(() => {
+    // Update form default values once user data is loaded
+    form.setValue("name", user.firstname && user.lastname ? `${user.firstname} ${user.lastname}` : "");
+    form.setValue("email", user.email ?? "");
+  }, [user, form]);
+
   const onSubmit = async (data: FormValues) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/submissions`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(data),
-        },
+        }
       );
       const result = await response.json();
       if (response.ok) {
-        setSubmissionId(result.id);
         localStorage.setItem("submissionId", result.id);
         router.push(`/pending/${result.id}`);
       } else {
@@ -100,7 +114,6 @@ export default function Submission() {
                 <FormControl>
                   <Input
                     disabled
-                    type="name"
                     placeholder="Enter your name"
                     className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     {...field}
@@ -122,7 +135,6 @@ export default function Submission() {
                 <FormControl>
                   <Input
                     disabled
-                    type="email"
                     placeholder="Enter a valid email address"
                     className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     {...field}
@@ -185,26 +197,6 @@ export default function Submission() {
           </div>
         </form>
       </Form>
-      {submissionId && (
-        <div className="mt-6 p-4 bg-green-100 text-green-800 rounded-lg">
-          <h2 className="text-lg font-semibold">Submission Successful!</h2>
-          <p>
-            Your submission ID is:{" "}
-            <span className="font-bold">{submissionId}</span>
-          </p>
-          <p>
-            We will notify you once your resume and portfolio have been
-            reviewed.
-          </p>
-        </div>
-      )}
-
-      {previousReview && (
-        <div className="mt-6 p-4 bg-gray-100 text-gray-800 rounded-lg">
-          <h3 className="text-lg font-semibold">Previous Review</h3>
-          <p>{previousReview}</p>
-        </div>
-      )}
     </div>
   );
 }

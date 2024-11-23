@@ -149,7 +149,13 @@ const SubmissionsPage = () => {
   useEffect(() => {
     const fetchSubmissionsAndReviews = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/submissions`);
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/submissions`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (!response.ok) {
           throw new Error('Failed to fetch submissions');
         }
@@ -188,7 +194,13 @@ const SubmissionsPage = () => {
 
   const fetchReview = async (submissionId: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reviews/${submissionId}`);
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reviews/${submissionId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (!response.ok) {
         throw new Error('Failed to fetch review');
       }

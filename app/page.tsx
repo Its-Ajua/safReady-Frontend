@@ -16,7 +16,7 @@ export default function page() {
           Ready to step into tech? SAFReady provides the essential tools to help you build your career, click on the link below to find out more...
         </p>
         <p className="font-medium text-gray-900 mb-4">&quot;The future belongs to those who prepare for it today.&quot; - <em>Malcolm X</em></p>
-        <Link href="/login">
+        <Link href="/register">
             <Button className="rounded-full border-2 border-transparent hover:border-blue-500 hover:bg-gray-600 transition duration-300 px-6 py-3">Get Started</Button>
           </Link>
         </div>

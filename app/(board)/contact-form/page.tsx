@@ -36,10 +36,35 @@ export default function ContactForm() {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [formStatus, setFormStatus] = useState("pending");
     const [scheduledDate, setScheduledDate] = useState<Date | null>(null);
+    const [user, setUser] = useState({ firstname: "", lastname: "", email: "" });
 
-    const form = useForm<z.infer<typeof FormSchema>>({
-        resolver: zodResolver(FormSchema),
-    });
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+      } catch (error) {
+        console.error("Invalid user data in localStorage:", error);
+      }
+    }
+  }, []);
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    defaultValues: {
+      name: user.firstname && user.lastname ? `${user.firstname} ${user.lastname}` : "",
+      email: user.email ?? "",
+      date: new Date(),
+      time: "",
+      message: "",
+    },
+    resolver: zodResolver(FormSchema),
+  });
+
+  useEffect(() => {
+    form.setValue("name", user.firstname && user.lastname ? `${user.firstname} ${user.lastname}` : "");
+    form.setValue("email", user.email ?? "");
+  }, [user, form]);
 
     const minDate = new Date();
     const maxDate = new Date();
@@ -56,21 +81,34 @@ export default function ContactForm() {
         return isBefore(date, parsedMinDate) || isAfter(date, parsedMaxDate);
     };
 
-    useEffect(() => {
-        localStorage.removeItem("formId");
-    }, []);
-
     const onSubmit = useCallback(
         async (data: z.infer<typeof FormSchema>) => {
             const { date, ...rest } = data;
-            const utcDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-            const payload = { ...rest, date: utcDate.toISOString() };
+            if (!(date instanceof Date) || isNaN(date.getTime())) {
+                console.error("Invalid date provided:", date);
+                return;
+            }
 
+            // Combine date and time
+            const [hours, minutes] = time.split(':');
+            const combinedDateTime = new Date(date);
+            combinedDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+            // Create UTC date
+            const utcDateTime = new Date(combinedDateTime.getTime() - combinedDateTime.getTimezoneOffset() * 60000);
+            
+            const payload = {
+                ...rest,
+                date: utcDateTime.toISOString(), // This ensures proper ISO string format
+                time
+            };
             try {
+                const token = localStorage.getItem("token");
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/form`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
                     },
                     body: JSON.stringify(payload),
                 });
@@ -98,6 +136,7 @@ export default function ContactForm() {
                                 <FormLabel className="text-sm font-medium text-primary dark:text-white">Full Name</FormLabel>
                                 <FormControl>
                                     <Input
+                                        disabled
                                         type="text"
                                         placeholder="Enter your full name"
                                         className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -118,6 +157,7 @@ export default function ContactForm() {
                                 <FormControl>
                                     <Input
                                         type="email"
+                                        disabled
                                         placeholder="Enter a valid email address"
                                         className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                         {...field}
@@ -145,7 +185,17 @@ export default function ContactForm() {
                                             </FormControl>
                                         </PopoverTrigger>
                                         <PopoverContent className="w-auto p-0">
-                                            <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={isDateDisabled} initialFocus />
+                                        <Calendar
+                                            mode="single"
+                                            selected={field.value ?? new Date()} // Use a default date if `field.value` is null
+                                            onSelect={(selectedDate) => {
+                                                if (selectedDate) {
+                                                field.onChange(selectedDate); // Ensure it's a valid Date object
+                                                }
+                                            }}
+                                            disabled={isDateDisabled}
+                                            initialFocus
+                                        />
                                         </PopoverContent>
                                     </Popover>
                                 </FormControl>

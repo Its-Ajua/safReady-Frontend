@@ -39,10 +39,12 @@ const AdminReviewPage = () => {
         status: 'reviewed',
       };
 
+      const token = localStorage.getItem("token");
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reviews/${submissionId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(reviewData),
       });

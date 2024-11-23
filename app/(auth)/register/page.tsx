@@ -70,7 +70,7 @@ export default function SignupPage() {
         localStorage.setItem('user', JSON.stringify(result.user)); 
       
         if (isMounted) {
-          router.push('/login');
+          router.push('/dashboard');
         }
       } else {
         console.error('Sign-up failed');
