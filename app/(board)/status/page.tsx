@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { format, isToday, parseISO } from "date-fns";
+import { format, isToday } from "date-fns";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
@@ -10,7 +10,7 @@ export default function StatusPage() {
   const router = useRouter();
   const formId = searchParams.get("formId");
 
-  const id = formId; // id is set to formId to use in both API calls as per the requirement
+  const id = formId;
 
   const [status, setStatus] = useState("pending");
   const [scheduledDate, setScheduledDate] = useState<Date | null>(null);
@@ -23,11 +23,7 @@ export default function StatusPage() {
       return;
     }
 
-    console.log("Form ID:", id);
-    console.log("API URL:", `${process.env.NEXT_PUBLIC_API_URL}/form-reviews/${formId}`);
-
     const token = localStorage.getItem("token");
-    console.log("Token:", token ? "Present" : "Missing");
 
     try {
       setIsLoading(true);
@@ -42,6 +38,7 @@ export default function StatusPage() {
           },
         }
       );
+      
       if (!statusResponse.ok) {
         throw new Error(
           `Failed to fetch form reviews status: ${statusResponse.status}`
@@ -62,7 +59,7 @@ export default function StatusPage() {
             },
           }
         );
-        console.log(dateResponse);
+
         if (!dateResponse.ok) {
           throw new Error(
             `Failed to fetch form scheduled date: ${dateResponse.status}`
@@ -70,15 +67,42 @@ export default function StatusPage() {
         }
 
         const dateResult = await dateResponse.json();
+        console.log("Date Result:", dateResult);
 
-        if (dateResult.date) {
-          const parsedDate = parseISO(dateResult.date);
-          setScheduledDate(parsedDate);
+        if (dateResult.date && Array.isArray(dateResult.date)) {
+          try {
+            // Create date from array [year, month, day]
+            // Note: JavaScript months are 0-based, so we subtract 1 from the month
+            const [year, month, day] = dateResult.date;
+            
+            // If time is available in the response, use it
+            let hours = 0;
+            let minutes = 0;
+            if (Array.isArray(dateResult.time) && dateResult.time.length === 2) {
+              [hours, minutes] = dateResult.time;
+            }
+            
+            const parsedDate = new Date(year, month - 1, day, hours, minutes);
+            
+            // Validate that we got a valid date
+            if (!isNaN(parsedDate.getTime())) {
+              setScheduledDate(parsedDate);
+            } else {
+              console.error("Invalid date after parsing:", dateResult.date);
+              setError("Invalid date format received from server");
+            }
+          } catch (parseError) {
+            console.error("Error parsing date:", parseError);
+            setError("Error processing the scheduled date");
+          }
+        } else {
+          console.error("Invalid date format received:", dateResult.date);
+          setError("Invalid date format received from server");
         }
       }
     } catch (error: any) {
       console.error("Error fetching form status:", error);
-      setError("blah blah blah is pending");
+      setError(error.message || "An error occurred while fetching the form status");
     } finally {
       setIsLoading(false);
     }
@@ -92,7 +116,6 @@ export default function StatusPage() {
 
   const isTodayScheduledDate = scheduledDate && isToday(scheduledDate);
 
-  // Handling loading and error states
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -104,7 +127,7 @@ export default function StatusPage() {
   if (error) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p>{error}</p>
+        <p className="text-red-500">{error}</p>
       </div>
     );
   }
@@ -126,7 +149,7 @@ export default function StatusPage() {
             <p>
               The link will be available on{" "}
               {scheduledDate
-                ? format(scheduledDate, "MMM dd, yyyy")
+                ? format(scheduledDate, "MMM dd, yyyy 'at' hh:mm a")
                 : "the scheduled date"}
               .
             </p>
