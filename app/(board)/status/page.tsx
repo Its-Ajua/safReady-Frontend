@@ -14,20 +14,18 @@ export default function StatusPage() {
 
   const [status, setStatus] = useState("pending");
   const [scheduledDate, setScheduledDate] = useState<Date | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [initialLoad, setInitialLoad] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchStatus = useCallback(async () => {
     if (!id) {
-      console.error("No form ID provided");
+      setInitialLoad(false);
       return;
     }
 
     const token = localStorage.getItem("token");
 
     try {
-      setIsLoading(true);
-
       const statusResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/form-reviews/${formId}`,
         {
@@ -38,14 +36,27 @@ export default function StatusPage() {
           },
         }
       );
-      
+
       if (!statusResponse.ok) {
-        throw new Error(
-          `Failed to fetch form reviews status: ${statusResponse.status}`
-        );
+        throw new Error(`Server returned ${statusResponse.status}`);
       }
 
-      const statusResult = await statusResponse.json();
+      let statusResult;
+      try {
+        const text = await statusResponse.text();
+        if (!text) {
+          throw new Error("Empty response received");
+        }
+        statusResult = JSON.parse(text);
+      } catch (e) {
+        console.error("Failed to parse status response:", e);
+        throw new Error("Invalid response format from server");
+      }
+
+      if (!statusResult || typeof statusResult.status === 'undefined') {
+        throw new Error("Invalid status response format");
+      }
+
       setStatus(statusResult.status);
 
       if (statusResult.status === "approved") {
@@ -66,16 +77,24 @@ export default function StatusPage() {
           );
         }
 
-        const dateResult = await dateResponse.json();
+        let dateResult;
+        try {
+          const text = await dateResponse.text();
+          if (!text) {
+            throw new Error("Empty date response received");
+          }
+          dateResult = JSON.parse(text);
+        } catch (e) {
+          console.error("Failed to parse date response:", e);
+          throw new Error("Invalid date response format from server");
+        }
+
         console.log("Date Result:", dateResult);
 
         if (dateResult.date && Array.isArray(dateResult.date)) {
           try {
-            // Create date from array [year, month, day]
-            // Note: JavaScript months are 0-based, so we subtract 1 from the month
             const [year, month, day] = dateResult.date;
             
-            // If time is available in the response, use it
             let hours = 0;
             let minutes = 0;
             if (Array.isArray(dateResult.time) && dateResult.time.length === 2) {
@@ -84,7 +103,6 @@ export default function StatusPage() {
             
             const parsedDate = new Date(year, month - 1, day, hours, minutes);
             
-            // Validate that we got a valid date
             if (!isNaN(parsedDate.getTime())) {
               setScheduledDate(parsedDate);
             } else {
@@ -104,30 +122,24 @@ export default function StatusPage() {
       console.error("Error fetching form status:", error);
       setError(error.message || "An error occurred while fetching the form status");
     } finally {
-      setIsLoading(false);
+      setInitialLoad(false);
     }
   }, [id, formId]);
 
   useEffect(() => {
-    if (id) {
-      fetchStatus();
-    }
-  }, [id, fetchStatus]);
+    fetchStatus();
+    
+    const intervalId = setInterval(fetchStatus, 5000);
+    
+    return () => clearInterval(intervalId);
+  }, [fetchStatus]);
 
   const isTodayScheduledDate = scheduledDate && isToday(scheduledDate);
 
-  if (isLoading) {
+  if (initialLoad) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <p>Loading...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <p className="text-red-500">{error}</p>
       </div>
     );
   }

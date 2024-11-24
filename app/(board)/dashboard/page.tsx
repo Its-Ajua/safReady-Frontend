@@ -212,7 +212,6 @@ const DashBoardList = () => {
         ))}
       </ul>
 
-      {/* Slideshow for Reviews */}
       <div className="mt-10">
         <h3 className="text-2xl font-semibold text-gray-900 dark:text-blue-700 text-center mb-6">
           What Our Users Say

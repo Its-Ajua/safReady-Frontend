@@ -160,7 +160,7 @@ export default function SignupPage() {
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input type="confirmPassword" placeholder="Confirm Password" className='placeholder:text-primary' 
+                    <Input type="password" placeholder="Confirm Password" className='placeholder:text-primary' 
                     {...field}/>
                   </FormControl>
                   <FormMessage />

@@ -83,23 +83,22 @@ export default function ContactForm() {
 
     const onSubmit = useCallback(
         async (data: z.infer<typeof FormSchema>) => {
-            const { date, ...rest } = data;
+            const { date, time, ...rest } = data;
             if (!(date instanceof Date) || isNaN(date.getTime())) {
                 console.error("Invalid date provided:", date);
                 return;
             }
 
-            // Combine date and time
+            
             const [hours, minutes] = time.split(':');
             const combinedDateTime = new Date(date);
             combinedDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
-            // Create UTC date
             const utcDateTime = new Date(combinedDateTime.getTime() - combinedDateTime.getTimezoneOffset() * 60000);
             
             const payload = {
                 ...rest,
-                date: utcDateTime.toISOString(), // This ensures proper ISO string format
+                date: utcDateTime.toISOString(), 
                 time
             };
             try {
